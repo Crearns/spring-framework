@@ -19,26 +19,26 @@ package org.springframework.core.io;
 import org.springframework.lang.Nullable;
 
 /**
- * A resolution strategy for protocol-specific resource handles.
  *
- * <p>Used as an SPI for {@link DefaultResourceLoader}, allowing for
- * custom protocols to be handled without subclassing the loader
- * implementation (or application context implementation).
+ * 用户自定义协议资源解决策略
+ * 它允许用户自定义资源加载协议，而不需要继承 ResourceLoader 的子类。
+ * 有了 ProtocolResolver 后，我们不需要直接继承 DefaultResourceLoader，改为实现 ProtocolResolver 接口也可以实现自定义的 ResourceLoader。
  *
- * @author Juergen Hoeller
- * @since 4.3
- * @see DefaultResourceLoader#addProtocolResolver
+ * Spring 框架中并没有这个接口的实现类，在DefaultResourceLoader.java中的 addProtocolResolver 方法加入这个实现类即可加入 Spring 体系
+ *
+ * 		public void addProtocolResolver(ProtocolResolver resolver) {
+ * 			Assert.notNull(resolver, "ProtocolResolver must not be null");
+ * 			this.protocolResolvers.add(resolver);
+ *      }
+ *
+ *
  */
 @FunctionalInterface
 public interface ProtocolResolver {
 
 	/**
-	 * Resolve the given location against the given resource loader
-	 * if this implementation's protocol matches.
-	 * @param location the user-specified resource location
-	 * @param resourceLoader the associated resource loader
-	 * @return a corresponding {@code Resource} handle if the given location
-	 * matches this resolver's protocol, or {@code null} otherwise
+	 * 使用指定的 ResourceLoader ，解析指定的 location 。
+	 * 若成功，则返回对应的 Resource 。
 	 */
 	@Nullable
 	Resource resolve(String location, ResourceLoader resourceLoader);
