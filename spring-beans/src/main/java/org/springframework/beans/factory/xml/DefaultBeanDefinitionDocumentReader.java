@@ -55,6 +55,10 @@ import org.springframework.util.StringUtils;
  * @author Rob Harrop
  * @author Erik Wiersma
  * @since 18.12.2003
+ *
+ *
+ *
+ * 有且只有一个默认实现类 DefaultBeanDefinitionDocumentReader
  */
 public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocumentReader {
 
@@ -93,6 +97,8 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	@Override
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
+		// 获得 XML Document Root Element
+		// 执行注册 BeanDefinition
 		doRegisterBeanDefinitions(doc.getDocumentElement());
 	}
 

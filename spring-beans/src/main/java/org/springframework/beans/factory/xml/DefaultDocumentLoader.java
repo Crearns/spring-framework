@@ -68,12 +68,14 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	@Override
 	public Document loadDocument(InputSource inputSource, EntityResolver entityResolver,
 			ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
-
+		// 创建 DocumentBuilderFactory 对象
 		DocumentBuilderFactory factory = createDocumentBuilderFactory(validationMode, namespaceAware);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Using JAXP provider [" + factory.getClass().getName() + "]");
 		}
+		// 创建 DocumentBuilder 对象
 		DocumentBuilder builder = createDocumentBuilder(factory, entityResolver, errorHandler);
+		// 解析 XML InputSource 返回 Document 对象
 		return builder.parse(inputSource);
 	}
 
@@ -87,16 +89,18 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	 */
 	protected DocumentBuilderFactory createDocumentBuilderFactory(int validationMode, boolean namespaceAware)
 			throws ParserConfigurationException {
-
+		// 创建 DocumentBuilderFactory
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(namespaceAware);
+		factory.setNamespaceAware(namespaceAware);// 设置命名空间支持
 
 		if (validationMode != XmlValidationModeDetector.VALIDATION_NONE) {
-			factory.setValidating(true);
+			factory.setValidating(true); // 开启校验
 			if (validationMode == XmlValidationModeDetector.VALIDATION_XSD) {
+				// 如果是XSD模式 设置 setNamespaceAware
 				// Enforce namespace aware for XSD...
 				factory.setNamespaceAware(true);
 				try {
+					// 设置 SCHEMA_LANGUAGE_ATTRIBUTE
 					factory.setAttribute(SCHEMA_LANGUAGE_ATTRIBUTE, XSD_SCHEMA_LANGUAGE);
 				}
 				catch (IllegalArgumentException ex) {
@@ -127,14 +131,17 @@ public class DefaultDocumentLoader implements DocumentLoader {
 	protected DocumentBuilder createDocumentBuilder(DocumentBuilderFactory factory,
 			@Nullable EntityResolver entityResolver, @Nullable ErrorHandler errorHandler)
 			throws ParserConfigurationException {
-
+		// 创建 docBuilder 对象
 		DocumentBuilder docBuilder = factory.newDocumentBuilder();
+		// 如果参数 entityResolver 不为空 设置属性
 		if (entityResolver != null) {
 			docBuilder.setEntityResolver(entityResolver);
 		}
+		// 如果参数 errorHandler 不为空 设置属性
 		if (errorHandler != null) {
 			docBuilder.setErrorHandler(errorHandler);
 		}
+		// 返回 docBuilder 对象
 		return docBuilder;
 	}
 
