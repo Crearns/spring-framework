@@ -92,7 +92,7 @@ public class DefaultDocumentLoader implements DocumentLoader {
 		// 创建 DocumentBuilderFactory
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(namespaceAware);// 设置命名空间支持
-
+		// 如果没有禁用验证
 		if (validationMode != XmlValidationModeDetector.VALIDATION_NONE) {
 			factory.setValidating(true); // 开启校验
 			if (validationMode == XmlValidationModeDetector.VALIDATION_XSD) {
