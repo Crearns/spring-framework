@@ -43,6 +43,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	/** Logger available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	// 别名 - beanName 键值对
 	/** Map from alias to canonical name. */
 	private final Map<String, String> aliasMap = new ConcurrentHashMap<>(16);
 
@@ -52,6 +53,7 @@ public class SimpleAliasRegistry implements AliasRegistry {
 		Assert.hasText(name, "'name' must not be empty");
 		Assert.hasText(alias, "'alias' must not be empty");
 		synchronized (this.aliasMap) {
+			// name == alias 则去掉alias
 			if (alias.equals(name)) {
 				this.aliasMap.remove(alias);
 				if (logger.isDebugEnabled()) {
@@ -59,12 +61,16 @@ public class SimpleAliasRegistry implements AliasRegistry {
 				}
 			}
 			else {
+				// 获取 alias 已注册的 beanName
 				String registeredName = this.aliasMap.get(alias);
+				// 已存在
 				if (registeredName != null) {
+					// 如果和name相同 无需注册
 					if (registeredName.equals(name)) {
 						// An existing alias - no need to re-register
 						return;
 					}
+					// 不允许覆盖，则抛出 IllegalStateException 异常
 					if (!allowAliasOverriding()) {
 						throw new IllegalStateException("Cannot define alias '" + alias + "' for name '" +
 								name + "': It is already registered for name '" + registeredName + "'.");
@@ -74,7 +80,9 @@ public class SimpleAliasRegistry implements AliasRegistry {
 								registeredName + "' with new target name '" + name + "'");
 					}
 				}
+				// 校验，是否存在循环指向
 				checkForAliasCircle(name, alias);
+				// 覆盖别名
 				this.aliasMap.put(alias, name);
 				if (logger.isTraceEnabled()) {
 					logger.trace("Alias definition '" + alias + "' registered for name '" + name + "'");
@@ -197,7 +205,13 @@ public class SimpleAliasRegistry implements AliasRegistry {
 	 * @param alias the candidate alias
 	 * @see #registerAlias
 	 * @see #hasAlias
+	 *
+	 * 如果 name、alias 分别为 1 和 3 ，则构成 （1,3） 的映射。
+	 * 加入，此时集合中存在（A,1）、（3,A） 的映射，意味着出现循环指向的情况，则抛出 IllegalStateException 异常。
+	 *
+	 *
 	 */
+
 	protected void checkForAliasCircle(String name, String alias) {
 		if (hasAlias(alias, name)) {
 			throw new IllegalStateException("Cannot register alias '" + alias +
