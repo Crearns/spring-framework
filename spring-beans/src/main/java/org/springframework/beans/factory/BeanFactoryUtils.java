@@ -56,6 +56,8 @@ public abstract class BeanFactoryUtils {
 	 * Cache from name with factory bean prefix to stripped name without dereference.
 	 * @since 5.1
 	 * @see BeanFactory#FACTORY_BEAN_PREFIX
+	 *
+	 * 缓存 {@link #transformedBeanName(String)} 已经转换好的结果。
 	 */
 	private static final Map<String, String> transformedBeanNameCache = new ConcurrentHashMap<>();
 
@@ -79,7 +81,15 @@ public abstract class BeanFactoryUtils {
 	 * @see BeanFactory#FACTORY_BEAN_PREFIX
 	 */
 	public static String transformedBeanName(String name) {
+		//
 		Assert.notNull(name, "'name' must not be null");
+		/**
+		 * 去除 FactoryBean 的修饰符 &
+		 *
+		 * 如果 name 以 “&” 为前缀，那么会去掉该 "&" 。
+		 * 例如，name = "&studentService" ，则会是 name = "studentService"。
+		 *
+		 */
 		if (!name.startsWith(BeanFactory.FACTORY_BEAN_PREFIX)) {
 			return name;
 		}
