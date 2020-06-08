@@ -54,6 +54,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class SimpleServletHandlerAdapter implements HandlerAdapter {
 
+	// 判断是 Servlet 类型
 	@Override
 	public boolean supports(Object handler) {
 		return (handler instanceof Servlet);
@@ -64,6 +65,7 @@ public class SimpleServletHandlerAdapter implements HandlerAdapter {
 	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
+		// Servlet 类型的调用
 		((Servlet) handler).service(request, response);
 		return null;
 	}

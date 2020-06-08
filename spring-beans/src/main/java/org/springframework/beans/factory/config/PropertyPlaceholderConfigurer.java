@@ -52,6 +52,9 @@ import org.springframework.util.StringValueResolver;
  * @deprecated as of 5.2; use {@code org.springframework.context.support.PropertySourcesPlaceholderConfigurer}
  * instead which is more flexible through taking advantage of the {@link org.springframework.core.env.Environment}
  * and {@link org.springframework.core.env.PropertySource} mechanisms.
+ *
+ * 加载指定 Properties，迭代其中的属性值，依据 “.” 来得到 beanName（split(".")[0]），从容器中获取指定的 BeanDefinition，然后得到 name 属性，进行替换即可
+ *
  */
 @Deprecated
 public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport {

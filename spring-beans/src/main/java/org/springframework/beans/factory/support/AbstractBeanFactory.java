@@ -244,6 +244,17 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 *
 	 */
 	@SuppressWarnings("unchecked")
+	/**
+	 * 1. 转换 beanName 。因为我们调用 #getBean(...) 方法传入的 name 并不一定就是 beanName，可以传入 aliasName，FactoryBean，所以这里需要进行简单的转换过程。
+	 * 2. 尝试从缓存中加载单例 bean 。
+	 * 2.1 bean 的实例化。
+	 * 3. 原型模式的依赖检查。因为 Spring 只会解决单例模式的循环依赖，对于原型模式的循环依赖都是直接抛出 BeanCurrentlyInCreationException 异常。
+	 * 4. 尝试从 parentBeanFactory 获取 bean 实例。如果 parentBeanFactory != null && !containsBeanDefinition(beanName) 则尝试从 parentBeanFactory 中获取 bean 实例对象，因为 !containsBeanDefinition(beanName) 就意味着定义的 xml 文件中没有 beanName 相应的配置，这个时候就只能从 parentBeanFactory 中获取。
+	 * 5. 获取 RootBeanDefinition，并对其进行合并检查。从缓存中获取已经解析的 RootBeanDefinition 。同时，如果父类不为 null 的话，则会合并父类的属性。
+	 * 6. 依赖检查。某个 bean 依赖其他 bean ，则需要先加载依赖的 bean。
+	 * 7. 对不同的 scope 进行处理。
+	 * 8. 类型转换处理。如果传递的 requiredType 不为 null，则需要检测所得到 bean 的类型是否与该 requiredType 一致。如果不一致则尝试转换，当然也要能够转换成功，否则抛出 BeanNotOfRequiredTypeException 异常。
+	 */
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
 

@@ -71,15 +71,18 @@ public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionRes
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
 
 		try {
+			// <1> 情况一，如果异常是 ResponseStatusException 类型，进行解析并设置到响应
 			if (ex instanceof ResponseStatusException) {
 				return resolveResponseStatusException((ResponseStatusException) ex, request, response, handler);
 			}
 
+			// <2> 情况二，如果有 @ResponseStatus 注解，进行解析并设置到响应
 			ResponseStatus status = AnnotatedElementUtils.findMergedAnnotation(ex.getClass(), ResponseStatus.class);
 			if (status != null) {
 				return resolveResponseStatus(status, request, response, handler, ex);
 			}
 
+			// <3> 情况三，使用异常的 cause 在走一次情况一、情况二的逻辑。
 			if (ex.getCause() instanceof Exception) {
 				return doResolveException(request, response, handler, (Exception) ex.getCause());
 			}

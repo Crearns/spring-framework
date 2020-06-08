@@ -131,10 +131,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 			Object... providedArgs) throws Exception {
 
+		// <y> 解析参数
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
+		// 执行调用
 		return doInvoke(args);
 	}
 
@@ -150,22 +152,29 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		if (ObjectUtils.isEmpty(getMethodParameters())) {
 			return EMPTY_ARGS;
 		}
+		// 方法的参数信息的数组
 		MethodParameter[] parameters = getMethodParameters();
+		// 解析后的参数结果数组
 		Object[] args = new Object[parameters.length];
+		// 遍历，开始解析
 		for (int i = 0; i < parameters.length; i++) {
+			// 获得当前遍历的 MethodParameter 对象，并设置 parameterNameDiscoverer 到其中
 			MethodParameter parameter = parameters[i];
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
 			args[i] = findProvidedArgument(parameter, providedArgs);
 			if (args[i] != null) {
 				continue;
 			}
+			// <2> 判断 argumentResolvers 是否支持当前的参数解析
 			if (!this.resolvers.supportsParameter(parameter)) {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
 			try {
+				// 执行解析。解析成功后，则进入下一个参数的解析
 				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
 			}
 			catch (Exception ex) {
+				// 解析失败，打印日志，并抛出异常
 				// Leave stack trace for later, exception may actually be resolved and handled..
 				if (logger.isDebugEnabled()) {
 					String error = ex.getMessage();
@@ -184,8 +193,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 */
 	@Nullable
 	protected Object doInvoke(Object... args) throws Exception {
+		// <z1> 设置方法为可访问
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
+			// <z2> 执行调用
 			return getBridgedMethod().invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

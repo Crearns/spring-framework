@@ -84,6 +84,7 @@ public final class MultipartResolutionDelegate {
 
 	public static boolean isMultipartArgument(MethodParameter parameter) {
 		Class<?> paramType = parameter.getNestedParameterType();
+		// MultipartFile 的多种情况
 		return (MultipartFile.class == paramType ||
 				isMultipartFileCollection(parameter) || isMultipartFileArray(parameter) ||
 				(Part.class == paramType || isPartCollection(parameter) || isPartArray(parameter)));

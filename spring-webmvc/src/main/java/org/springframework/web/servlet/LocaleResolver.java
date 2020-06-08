@@ -53,6 +53,7 @@ import org.springframework.lang.Nullable;
 public interface LocaleResolver {
 
 	/**
+	 * 从请求中，解析出要使用的语言。例如，请求头的 "Accept-Language"
 	 * Resolve the current locale via the given request.
 	 * Can return a default locale as fallback in any case.
 	 * @param request the request to resolve the locale for

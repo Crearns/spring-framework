@@ -140,6 +140,7 @@ public final class PatternsRequestCondition extends AbstractRequestCondition<Pat
 		}
 		Set<String> result = new LinkedHashSet<>(patterns.size());
 		for (String pattern : patterns) {
+			// 自动补齐 /
 			if (StringUtils.hasLength(pattern) && !pattern.startsWith("/")) {
 				pattern = "/" + pattern;
 			}

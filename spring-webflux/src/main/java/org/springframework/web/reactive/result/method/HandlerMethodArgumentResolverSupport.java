@@ -114,6 +114,7 @@ public abstract class HandlerMethodArgumentResolverSupport implements HandlerMet
 			MethodParameter parameter, Class<A> annotationType, BiPredicate<A, Class<?>> typePredicate) {
 
 		A annotation = parameter.getParameterAnnotation(annotationType);
+		// 如果无 @PathVariable 注解
 		if (annotation == null) {
 			return false;
 		}
